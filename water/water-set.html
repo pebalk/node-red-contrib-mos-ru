@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    RED.nodes.registerType('waterSet', {
+        category: 'mos',
+        color: '#cc2222',
+        defaults: {
+            name: {value: ""},
+            login: {value: ""},
+            password: {value: ""},
+            paycode: {value: ""},
+            kv: {value: ""}
+        },
+        inputs: 1,
+        outputs: 2,
+        outputLabels: ["stdout", "stderr"],
+        icon: "font-awesome/fa-tint",
+        align: 'right',
+        label: function () {
+            return this.name || "waterSet";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="waterSet">
+    <div class="form-row">
+        <label for="node-input-login"><i class="fa fa-user"></i> Логин</label>
+        <input type="text" id="node-input-login" placeholder="login">
+    </div>
+        <div class="form-row">
+        <label for="node-input-password"><i class="fa fa-key"></i> Пароль</label>
+        <input type="text" id="node-input-password" placeholder="password">
+    </div>
+    <hr align="middle"/>
+        <div class="form-row">
+        <label for="node-input-paycode"><i class="fa fa-id-card"></i> Код плательщика</label>
+        <input type="text" id="node-input-paycode" placeholder="paycode">
+    </div>
+        <div class="form-row">
+        <label for="node-input-kv"><i class="fa fa-building"></i> Квартира</label>
+        <input type="text" id="node-input-kv" placeholder="kv">
+    </div>
+    <hr align="middle"/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="waterSet">
+    <p>Простая нода для подачи показаний приборов учёта воды на <a href="https://mos.ru">mos.ru</a>. Использует <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> </p>
+    <p><b>Настройки:</b></p>
+    <p>- Name - Имя ноды</p>
+    <p>- Логин - Логин на портале <a href="https://mos.ru">mos.ru</a></p>
+    <p>- Пароль - Пароль на портале <a href="https://mos.ru">mos.ru</a></p>
+    <p>- Код плательщика - </p>
+    <p>- Номер квартиры - </p>
+    <p><b> Конфигурация через Входящие Сообщения:</b></p>
+    <p>- msg.water - Array данных для подачи показаний</p>
+    <p>- msg.executablePath - Путь к установленному Chromium. По умолчанию: '/usr/bin/chromium-browser'</p>
+    <p>- msg.login - Логин</p>
+    <p>- msg.password - Пароль</p>
+    <p>- msg.paycode - Код плательщика</p>
+    <p>- msg.kv - Квартира</p>
+</script>

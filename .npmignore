@@ -1,0 +1,6 @@
+.git/
+assets/
+node_modules/
+.gitignore
+.gitattributes
+package-lock.json

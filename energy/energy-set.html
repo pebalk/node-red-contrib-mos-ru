@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    RED.nodes.registerType('energySet', {
+        category: 'mos',
+        color: '#cc2222',
+        defaults: {
+            name: {value: ""},
+            login: {value: ""},
+            password: {value: ""},
+            mosenergo_accnum: {value: ""},
+            mosenergo_cntnum: {value: ""}
+        },
+        inputs: 1,
+        outputs: 2,
+        outputLabels: ["stdout", "stderr"],
+        icon: "font-awesome/fa-bolt",
+        align: 'right',
+        label: function () {
+            return this.name || "energySet";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="energySet">
+    <div class="form-row">
+        <label for="node-input-login"><i class="fa fa-user"></i> Логин</label>
+        <input type="text" id="node-input-login" placeholder="login">
+    </div>
+    <div class="form-row">
+        <label for="node-input-password"><i class="fa fa-key"></i> Пароль</label>
+        <input type="text" id="node-input-password" placeholder="password">
+    </div>
+    <hr align="middle"/>
+    <div class="form-row">
+        <label for="node-input-mosenergo_accnum"><i class="fa fa-id-card"></i> Лицевой счет</label>
+        <input type="text" id="node-input-mosenergo_accnum" placeholder="mosenergo_accnum">
+    </div>
+    <div class="form-row">
+        <label for="node-input-mosenergo_cntnum"><i class="fa fa-tachometer"></i> Счетчик</label>
+        <input type="text" id="node-input-mosenergo_cntnum" placeholder="mosenergo_cntnum">
+    </div>
+    <hr align="middle"/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="energySet">
+    <p>Простая нода для подачи показаний электроэнергии на <a href="https://mos.ru">mos.ru</a>. Использует <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> </p>
+    <p><b>Настройки:</b></p>
+    <p>- Name - Имя ноды</p>
+    <p>- Логин - Логин на портале <a href="https://mos.ru">mos.ru</a></p>
+    <p>- Пароль - Пароль на портале <a href="https://mos.ru">mos.ru</a></p>
+    <p>- Номер лицевого счета - </p>
+    <p>- Номер счетчика - </p>
+    <p><b> Конфигурация через Входящие Сообщения:</b></p>
+    <p>- msg.energy - Array данных для подачи показаний</p>
+    <p>- msg.executablePath - Путь к установленному Chromium. По умолчанию: '/usr/bin/chromium-browser'</p>
+    <p>- msg.login - Логин</p>
+    <p>- msg.password - Пароль</p>
+    <p>- msg.mosenergo_accnum - Лицевой счет</p>
+    <p>- msg.mosenergo_cntnum - Счетчик</p>
+</script>
