@@ -37,11 +37,12 @@ module.exports = function (RED) {
         function getOptions(executablePath) {
             let options = {};
             options.executablePath = executablePath || '/usr/bin/chromium-browser';
+            options.slowMo = 1000;
             return options;
         }
 
         node.on('input', function (msg) {
-            var url = 'https://www.mos.ru/pgu/ru/application/guis/1111/';
+            var url = 'https://www.mos.ru/pgu/ru/application/mosenergo/counters/';
             const login = msg.login || configLogin;
             const password = msg.password || configPassword;
             const paycode = msg.paycode || configPaycode;
@@ -66,6 +67,7 @@ module.exports = function (RED) {
                     await page.keyboard.type(login);
                     await page.click('#password');
                     await page.keyboard.type(password);
+                    await page.click('#notRememberMe');
                     await page.click('#bind');
                     node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
 

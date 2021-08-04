@@ -33,6 +33,7 @@ module.exports = function (RED) {
         function getOptions(executablePath) {
             let options = {};
             options.executablePath = executablePath || '/usr/bin/chromium-browser';
+            options.slowMo = 1000;
             return options;
         }
 
@@ -61,6 +62,7 @@ module.exports = function (RED) {
                     await page.keyboard.type(login);
                     await page.click('#password');
                     await page.keyboard.type(password);
+                    await page.click('#notRememberMe');
                     await page.click('#bind');
                     node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
 
