@@ -33,7 +33,7 @@ module.exports = function (RED) {
         function getOptions(executablePath) {
             let options = {};
             options.executablePath = executablePath || '/usr/bin/chromium-browser';
-            options.slowMo = 1000;
+            options.slowMo = 100;
             return options;
         }
 
@@ -58,12 +58,15 @@ module.exports = function (RED) {
                     await page.goto(url);
                     node.status({fill: "green", shape: "dot", text: 'Авторизация'});
                     await page.waitForSelector('#login', { timeout: 5000 });
+                    node.status({fill: "green", shape: "dot", text: 'Login'});
                     await page.click('#login');
                     await page.keyboard.type(login);
+                    node.status({fill: "green", shape: "dot", text: 'Password'});
                     await page.click('#password');
                     await page.keyboard.type(password);
-                    await page.click('#notRememberMe');
+                    node.status({fill: "green", shape: "dot", text: 'Click'});
                     await page.click('#bind');
+                    await page.waitForSelector('#MES_ACCOUNT', { timeout: 5000 });
                     node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
 
                     url = "https://www.mos.ru/pgu/common/ajax/index.php?";
