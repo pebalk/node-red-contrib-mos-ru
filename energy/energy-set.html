@@ -47,17 +47,26 @@
 
 <script type="text/html" data-help-name="energySet">
     <p>Простая нода для подачи показаний электроэнергии на <a href="https://mos.ru">mos.ru</a>. Использует <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> </p>
-    <p><b>Настройки:</b></p>
-    <p>- Name - Имя ноды</p>
-    <p>- Логин - Логин на портале <a href="https://mos.ru">mos.ru</a></p>
-    <p>- Пароль - Пароль на портале <a href="https://mos.ru">mos.ru</a></p>
-    <p>- Номер лицевого счета - </p>
-    <p>- Номер счетчика - </p>
-    <p><b> Конфигурация через Входящие Сообщения:</b></p>
-    <p>- msg.energy - Array данных для подачи показаний</p>
-    <p>- msg.executablePath - Путь к установленному Chromium. По умолчанию: '/usr/bin/chromium-browser'</p>
-    <p>- msg.login - Логин</p>
-    <p>- msg.password - Пароль</p>
-    <p>- msg.mosenergo_accnum - Лицевой счет</p>
-    <p>- msg.mosenergo_cntnum - Счетчик</p>
+    <p>Нода отдает все данные, загруженные с сервера, в объекте <code>msg.content</code></p>
+    <h3>Настройки</h3>
+    <dl class="message-properties">
+        <ul>
+            <li><code>Name</code> - Имя ноды</li>
+            <li><code>Логин</code> - Логин на портале <a href="https://mos.ru">mos.ru</a></li>
+            <li><code>Пароль</code> - Пароль на портале <a href="https://mos.ru">mos.ru</a></li>
+            <li><code>Номер лицевого счета</code> - </li>
+            <li><code>Номер счетчика</code> - </li>
+        </ul>
+    </dl>
+    <h3> Конфигурация</h3>
+    <dl class="message-properties">
+        <ul>
+            <li><code>msg.energy</code> - Array данных для подачи показаний: msg.energy = [123,456,789];</li>
+            <li><code>msg.executablePath</code> - Путь к установленному Chromium. По умолчанию: '/usr/bin/chromium-browser'</li>
+            <li><code>msg.login</code> - Логин</li>
+            <li><code>msg.password</code> - Пароль</li>
+            <li><code>msg.mosenergo_accnum</code> - Лицевой счет</li>
+            <li><code>msg.mosenergo_cntnum</code> - Счетчик</li>
+        </ul>
+    </dl>
 </script>

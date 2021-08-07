@@ -62,16 +62,16 @@ module.exports = function (RED) {
                     const page = await context.newPage();
                     await page.goto(url);
                     node.status({fill: "green", shape: "dot", text: 'Авторизация'});
-                    await page.waitForSelector('#login', { timeout: 5000 });
-                    node.status({fill: "green", shape: "dot", text: 'Login'});
+                    await page.waitForSelector('#login', { timeout: 10000 });
+                    node.status({fill: "green", shape: "dot", text: 'Логин'});
                     await page.click('#login');
                     await page.keyboard.type(login);
-                    node.status({fill: "green", shape: "dot", text: 'Password'});
+                    node.status({fill: "green", shape: "dot", text: 'Пароль'});
                     await page.click('#password');
                     await page.keyboard.type(password);
-                    node.status({fill: "green", shape: "dot", text: 'Click'});
+                    node.status({fill: "green", shape: "dot", text: 'Вход'});
                     await page.click('#bind');
-                    await page.waitForSelector('#MES_ACCOUNT', { timeout: 5000 });
+                    await page.waitForSelector('#MES_ACCOUNT', { timeout: 10000 });
                     node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
 
                     url = "https://www.mos.ru/pgu/common/ajax/index.php?";
