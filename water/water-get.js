@@ -38,7 +38,7 @@ module.exports = function (RED) {
         }
 
         node.on('input', function (msg) {
-            var url = 'https://www.mos.ru/pgu/ru/application/mosenergo/counters/';
+            var url = 'https://www.mos.ru/services/pokazaniya-vodi-i-tepla/new/';
             const login = msg.login || configLogin;
             const password = msg.password || configPassword;
             const paycode = msg.paycode || configPaycode;
@@ -47,27 +47,74 @@ module.exports = function (RED) {
                 return;
             }
             (async () => {
+                
+                const fs = require("fs");
+
                 let browser;
                 try {
                     node.status({fill: "green", shape: "dot", text: 'Запуск браузера'});
                     const options = getOptions(msg.executablePath);
                     browser = await puppeteer.launch(options);
                     node.status({fill: "green", shape: "dot", text: 'Загрузка страницы'});
-                    const context = await browser.createIncognitoBrowserContext();
-                    const page = await context.newPage();
-                    await page.goto(url);
+
+
+                    const page = await browser.newPage();
+                    
+                    if (fs.existsSync("./cookies.json")) {
+                        node.status({fill: "green", shape: "dot", text: 'Установка куки'});
+                        const cookiesString = await fs.readFileSync("./cookies.json")
+                        const cookies = JSON.parse(cookiesString);
+                        await page.setCookie(...cookies);
+                    }
+
+                    node.status({fill: "green", shape: "dot", text: 'https://www.mos.ru/'});
+                    await page.goto('https://www.mos.ru/', {
+                        waitUntil: 'networkidle2',
+                    });
+
                     node.status({fill: "green", shape: "dot", text: 'Авторизация'});
-                    await page.waitForSelector('#login', { timeout: 10000 });
-                    node.status({fill: "green", shape: "dot", text: 'Логин'});
-                    await page.click('#login');
-                    await page.keyboard.type(login);
-                    node.status({fill: "green", shape: "dot", text: 'Пароль'});
-                    await page.click('#password');
-                    await page.keyboard.type(password);
-                    node.status({fill: "green", shape: "dot", text: 'Вход'});
-                    await page.click('#bind');
-                    await page.waitForSelector('#MES_ACCOUNT', { timeout: 10000 });
-                    node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
+                    await page.goto(url, {
+                        waitUntil: 'networkidle2',
+                    });
+
+                    node.status({fill: "green", shape: "dot", text: 'Авторизация...'});
+                    await page.waitForTimeout(5000);
+                    node.status({fill: "green", shape: "dot", text: 'Авторизация......'});
+                    await page.waitForTimeout(1000);
+
+                    if (await page.$('#submit-meters') === null) {
+                        await page.waitForSelector('#login');
+                        node.status({fill: "green", shape: "dot", text: 'Логин'});
+                        await page.click('#login');
+                        await page.keyboard.type(login);
+                        await page.waitForSelector('#password');
+                        node.status({fill: "green", shape: "dot", text: 'Пароль'});
+                        await page.click('#password');
+                        await page.keyboard.type(password);
+                        await page.waitForSelector('#bind');
+                        node.status({fill: "green", shape: "dot", text: 'Вход'});
+                        await page.click('#bind');
+                    }
+
+
+                    await page.waitForTimeout(1000);
+
+                    const client = await page.target().createCDPSession();
+
+                    const all_browser_cookies = (await client.send('Network.getAllCookies')).cookies;
+
+                    await fs.writeFileSync("./cookies.json", JSON.stringify(all_browser_cookies, null, 2));
+
+                    const result = all_browser_cookies.some(i => i.name.includes('Ltpatoken2'));
+
+                    if (result) {
+                        node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
+                    }
+                    else {
+                        node.status({fill: "red", shape: "dot", text: 'Авторизация провалена'});
+                        throw new Error("Authorization failed");
+                    }
+
 
                     url = "https://www.mos.ru/pgu/common/ajax/index.php?ajaxModule=Guis&ajaxAction=getCountersInfo&items%5Bpaycode%5D=";
                     url += paycode + "&items%5Bflat%5D=" + kv;

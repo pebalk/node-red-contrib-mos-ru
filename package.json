@@ -13,7 +13,7 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "puppeteer-core": "^10.2.0"
+    "puppeteer-core": "^10.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\""
