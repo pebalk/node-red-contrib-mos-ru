@@ -33,7 +33,7 @@ module.exports = function (RED) {
         function getOptions(executablePath) {
             let options = {};
             options.executablePath = executablePath || '/usr/bin/chromium-browser';
-            options.slowMo = 100;
+            options.slowMo = 20;
             return options;
         }
 
@@ -62,7 +62,7 @@ module.exports = function (RED) {
                     
                     if (fs.existsSync("./cookies.json")) {
                         node.status({fill: "green", shape: "dot", text: 'Установка куки'});
-                        const cookiesString = await fs.readFileSync("./cookies.json")
+                        const cookiesString = await fs.readFileSync("./cookies.json");
                         const cookies = JSON.parse(cookiesString);
                         await page.setCookie(...cookies);
                     }
@@ -78,9 +78,7 @@ module.exports = function (RED) {
                     });
 
                     node.status({fill: "green", shape: "dot", text: 'Авторизация...'});
-                    await page.waitForTimeout(5000);
-                    node.status({fill: "green", shape: "dot", text: 'Авторизация......'});
-                    await page.waitForTimeout(1000);
+                    await page.waitForTimeout(2000);
 
                     if (await page.$('#submit-meters') === null) {
                         await page.waitForSelector('#login');
