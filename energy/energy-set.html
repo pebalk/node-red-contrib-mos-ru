@@ -7,7 +7,8 @@
             login: {value: ""},
             password: {value: ""},
             mosenergo_accnum: {value: ""},
-            mosenergo_cntnum: {value: ""}
+            mosenergo_cntnum: {value: ""},
+            use_cookies: { value: true, required: false }
         },
         inputs: 1,
         outputs: 2,
@@ -42,6 +43,11 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <hr align="middle"/>
+    <div class="form-row">
+        <label for="node-input-use_cookies"><i class="fa fa-database"></i> Использовать Куки</label>
+        <input type="checkbox" id="node-input-use_cookies" style="display: inline-block; width: auto; vertical-align: top;" checked>
     </div>
 </script>
 

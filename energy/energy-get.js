@@ -9,6 +9,11 @@ module.exports = function (RED) {
         const configMosenergo_accnum = config.mosenergo_accnum;
         const configMosenergo_cntnum = config.mosenergo_cntnum;
 
+        let use_cookies = config.use_cookies;
+        if (use_cookies === undefined) {
+            use_cookies = true;
+        }
+
         function validateParams(login, password, mosenergo_accnum, mosenergo_cntnum) {
             if (!login) {
                 node.send([null, 'Не указан Логин в msg.login или конфигурации ноды']);
@@ -57,24 +62,29 @@ module.exports = function (RED) {
                     browser = await puppeteer.launch(options);
                     node.status({fill: "green", shape: "dot", text: 'Загрузка страницы'});
 
-
                     const page = await browser.newPage();
                     
-                    if (fs.existsSync("./cookies.json")) {
-                        node.status({fill: "green", shape: "dot", text: 'Установка куки'});
-                        const cookiesString = await fs.readFileSync("./cookies.json");
-                        const cookies = JSON.parse(cookiesString);
-                        await page.setCookie(...cookies);
+                    if (use_cookies) {
+
+                        if (fs.existsSync("./cookies.json")) {
+                            node.status({fill: "green", shape: "dot", text: 'Установка куки'});
+                            const cookiesString = fs.readFileSync("./cookies.json");
+                            const cookies = JSON.parse(cookiesString);
+                            await page.setCookie(...cookies);
+                        }
+
                     }
 
                     node.status({fill: "green", shape: "dot", text: 'https://www.mos.ru/'});
                     await page.goto('https://www.mos.ru/', {
-                        waitUntil: 'networkidle2',
+                        timeout: 60000,
+                        waitUntil: 'networkidle0',
                     });
 
                     node.status({fill: "green", shape: "dot", text: 'Авторизация'});
                     await page.goto(url, {
-                        waitUntil: 'networkidle2',
+                        timeout: 60000,
+                        waitUntil: 'networkidle0',
                     });
 
                     node.status({fill: "green", shape: "dot", text: 'Авторизация...'});
@@ -95,25 +105,44 @@ module.exports = function (RED) {
                     }
 
 
-                    await page.waitForTimeout(1000);
+                    await page.waitForTimeout(2000);
 
-                    const client = await page.target().createCDPSession();
-
-                    const all_browser_cookies = (await client.send('Network.getAllCookies')).cookies;
-
-                    await fs.writeFileSync("./cookies.json", JSON.stringify(all_browser_cookies, null, 2));
-
-                    const result = all_browser_cookies.some(i => i.name.includes('Ltpatoken2'));
-
-                    if (result) {
-                        node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
+                    if (await page.$('#content > div.form-wrapper > blockquote') === null) {
+                        node.status({fill: "green", shape: "dot", text: 'Авторизация прошла'});
                     }
                     else {
-                        node.status({fill: "red", shape: "dot", text: 'Авторизация провалена'});
-                        throw new Error("Authorization failed");
+                        node.status({fill: "green", shape: "dot", text: 'Авторизация 2...'});
+                        await page.waitForSelector('#login');
+                        node.status({fill: "green", shape: "dot", text: 'Логин'});
+                        await page.click('#login');
+                        await page.keyboard.type(login);
+                        await page.waitForSelector('#password');
+                        node.status({fill: "green", shape: "dot", text: 'Пароль'});
+                        await page.click('#password');
+                        await page.keyboard.type(password);
+                        await page.waitForSelector('#bind');
+                        node.status({fill: "green", shape: "dot", text: 'Вход'});
+                        await page.click('#bind');
                     }
 
+                    await page.waitForTimeout(2000);
 
+                    if (use_cookies) {
+
+                        const client = await page.target().createCDPSession();
+                        const all_browser_cookies = (await client.send('Network.getAllCookies')).cookies;
+                        fs.writeFileSync("./cookies.json", JSON.stringify(all_browser_cookies, null, 2));
+                        const result = all_browser_cookies.some(i => i.name.includes('Ltpatoken2'));
+
+                        if (result) {
+                            node.status({fill: "green", shape: "dot", text: 'Авторизация успешна'});
+                        }
+                        else {
+                            node.status({fill: "red", shape: "dot", text: 'Авторизация провалена'});
+                            throw new Error("Authorization failed");
+                        }
+
+                    }
 
                     url = "https://www.mos.ru/pgu/common/ajax/index.php?";
                     url += "ajaxModule=Mosenergo&ajaxAction=qMpguCheckShetch&items%5Bcode%5D=";
@@ -124,7 +153,6 @@ module.exports = function (RED) {
                     content = content.match(/\{\".*\}\}/);
                     content = content[0];
                     content = JSON.parse(content);
-
 
 
                     msg.id_kng = content.result.id_kng;
