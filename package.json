@@ -8,12 +8,14 @@
       "waterGet": "water/water-get.js",
       "waterSet": "water/water-set.js",
       "energyGet": "energy/energy-get.js",
-      "energySet": "energy/energy-set.js"
+      "energySet": "energy/energy-set.js",
+      "pwdReset": "password/password-reset.js",
+      "pwdUpdate": "password/password-update.js"
     }
   },
   "bundleDependencies": false,
   "dependencies": {
-    "puppeteer-core": "^10.4.0"
+    "puppeteer-core": "^13.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\""
